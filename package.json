@@ -1,0 +1,16 @@
+{
+  "name": "sharedb-versions-example",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sharedb": "^1.0.0-beta.13",
+    "sharedb-mongo": "^1.0.0-beta.7"
+  }
+}
