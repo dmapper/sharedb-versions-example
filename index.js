@@ -2,7 +2,8 @@ const ShareDB = require('sharedb')
 const sharedbMongo = require('sharedb-mongo')
 
 const {MONGO_URL, COLLECTION, ID} = getTestParams()
-const backend = new ShareDB({db: sharedbMongo(MONGO_URL)})
+const db = sharedbMongo(MONGO_URL)
+const backend = new ShareDB({db})
 const connection = backend.connect()
 
 async function getVersions (backend, collection, id, {debug} = {debug: false}) {
@@ -24,6 +25,9 @@ async function getVersions (backend, collection, id, {debug} = {debug: false}) {
       let snapshot = await promisify(cb => connection.fetchSnapshot(collection, id, v, cb))
       let {data} = snapshot
       debug && logRecord(`Version ${v}`, data)
+      let opDoc = await promisify(cb => db.mongo.collection('o_' + collection).findOne({d: id, v: v - 1}, cb))
+      let updatedAt = opDoc.m && opDoc.m.ts
+      debug && console.log('updatedAt:', updatedAt)
     }
   }
 }
