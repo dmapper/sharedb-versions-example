@@ -4,13 +4,12 @@ const sharedbMongo = require('sharedb-mongo')
 const {MONGO_URL, COLLECTION, ID} = getTestParams()
 
 const backend = new ShareDB({db: sharedbMongo(MONGO_URL)})
+const connection = backend.connect()
 
-// IMPORTANT: backend MUST BE created by ShareDB version 1.0.0-beta.13 or later!
+// IMPORTANT: backend (and connection from it) MUST BE created by ShareDB version 1.0.0-beta.13 or later!
 //            Also if you are creating a backend just to run this function,
 //            don't forget to close it with backend.close()
-async function getVersions (backend, collection, id, {debug} = {debug: false}) {
-  const connection = backend.connect()
-
+async function getVersions (backend, connection, collection, id, {debug} = {debug: false}) {
   debug && console.log('Get collection:', collection, 'id:', id || 'ALL')
   
   const promisify = (fn) => new Promise((resolve, reject) => fn((err, data) => err ? reject(err) : resolve(data)))
@@ -33,11 +32,13 @@ async function getVersions (backend, collection, id, {debug} = {debug: false}) {
       debug && console.log('updatedAt:', updatedAt)
     }
   }
-  connection.close()
 }
 
-getVersions(backend, COLLECTION, ID, {debug: true})
-  .then(() => backend.close(() => process.exit()))
+getVersions(backend, connection, COLLECTION, ID, {debug: true})
+  .then(() => {
+    connection.close()
+    backend.close(() => process.exit())
+  })
 
 // HELPER FUNCTIONS
 
