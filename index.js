@@ -5,6 +5,7 @@ const {MONGO_URL, COLLECTION, ID} = getTestParams()
 
 const backend = new ShareDB({db: sharedbMongo(MONGO_URL)})
 
+// IMPORTANT: backend MUST BE created by ShareDB version 1.0.0-beta.13 or later!
 async function getVersions (backend, collection, id, {debug} = {debug: false}) {
   const connection = backend.connect()
 
